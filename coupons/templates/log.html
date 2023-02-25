@@ -1,8 +1,3 @@
-
-<p>
-    {% if str %}
-    {{ str }}
-    {% else %}
-    here we see the logs
-    {% endif %}
-</p>
+{% for log in logs %}
+    <p>{{ log.msg }}</p>
+{% endfor %}

@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Page, Website
+from .models import Logs, Website
 
 
 def landing(request):
@@ -9,11 +9,9 @@ def landing(request):
                   'landing.html',
                   {'websites': websites})
 
-def logs(request, str=''):
+def logs(request):
 
-    if str == '':
-        return render(request,
-                    'log.html')
+    logs = Logs.objects.all()
     return render(request,
                   'log.html',
-                  {'str':str})
+                  {'logs':logs})

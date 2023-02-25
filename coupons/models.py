@@ -11,7 +11,7 @@ class Website(models.Model):
 
 
 class Page(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
     url = models.CharField(max_length=255)
     coupon = models.CharField(max_length=255)
     expiration = models.CharField(max_length=255)
@@ -21,3 +21,8 @@ class Page(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Logs(models.Model):
+    serial_num = models.CharField(max_length=10)
+    msg = models.CharField(max_length=255)
