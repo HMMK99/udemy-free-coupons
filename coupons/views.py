@@ -9,7 +9,11 @@ def landing(request):
                   'landing.html',
                   {'websites': websites})
 
-def logs(request):
+def logs(request, str=''):
 
+    if str == '':
+        return render(request,
+                    'log.html')
     return render(request,
-                  'log.html')
+                  'log.html',
+                  {'str':str})
