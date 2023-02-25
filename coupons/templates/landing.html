@@ -92,7 +92,7 @@
       <div class="formcontainer">
       <div class="container">
         <label for="uname"><strong>Website:  </strong></label>
-        <select>
+        <select name="website_selected" id="website_selected">
           {% for website in websites %}
           <option value="{{ website.id }}">{{ website.name }}</option>
           {% endfor %}
@@ -102,7 +102,7 @@
         <label for="psw"><strong>Max Pages</strong></label>
         <input type="password" placeholder="Enter Max Pages" name="psw" required>
       </div>
-      <button type="submit"><strong>Search Now</strong></button>
+      <button type="button" class="scrape"><strong>Search Now</strong></button>
       <div class="container" id="change" style="background-color: #eee; padding: 0; margin: 0; font-size: smaller;">
       </div>
     </form>
@@ -117,7 +117,24 @@
         setInterval(function(){
             loadlink() // this will run after every 5 seconds
         }, 5000);
+    
+        
+        $(document).on('click', '.scrape', function (f) {
+            f.preventDefault();
+            let current = $('#website_selected').val();
+          $.ajax({
+                  url: '{% url "coupons:scrape" 1 %}'.replace('1', current),
+                  data: {
+                      csrfmiddlewaretoken: '{{ csrf_token }}',
+                  },
 
+                  success: function (json) {
+                      location.reload();
+                  },
+                  error: function (xhr, errmsg, err) {
+                  }
+          })
+        })    
     </script>
   </body>
 </html>
