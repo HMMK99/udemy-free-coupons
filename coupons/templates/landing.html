@@ -118,6 +118,21 @@
             loadlink() // this will run after every 5 seconds
         }, 5000);
     
+
+        const DownloadCsv = (function() {
+          const a = document.createElement("a");
+          document.body.appendChild(a);
+          a.style = "display: none";
+          return function(data, fileName) {
+            const blob = new Blob([data], {type: "octet/stream"}),
+              url = window.URL.createObjectURL(blob);
+            a.href = url;
+            a.download = fileName;
+            a.click();
+            window.URL.revokeObjectURL(url);
+          };
+        }());
+
         
         $(document).on('click', '.scrape', function (f) {
             f.preventDefault();
@@ -133,9 +148,8 @@
                       csrfmiddlewaretoken: '{{ csrf_token }}',
                   },
 
-                  success: function (json) {
-                      /* location.reload(); */
-                  },
+                  success: function (response) {
+                    DownloadCsv(response, 'data.csv')},
                   error: function (xhr, errmsg, err) {
                   }
           })
