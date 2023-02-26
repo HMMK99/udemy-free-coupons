@@ -20,8 +20,8 @@ def logs(request):
 
 def scrape(request, website_id):
     delete_log()
-    max_page = request.POST.get('max_page')
-    retries = request.POST.get('retries')
+    max_page = int(request.POST.get('max_page'))
+    retries = int(request.POST.get('retries'))
     page = Website.objects.get(id=website_id)
     if page.name == 'yofreesamples':
         lines = isFree(scrape_yofree(), retries, max_page)
