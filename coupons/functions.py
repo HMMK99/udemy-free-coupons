@@ -113,7 +113,9 @@ def isFree(links, retries, max_page=1000):
             if num_page == max_page:
                 break
         else:
+            log('failed')
             while trials < retries+1:
+                log(trials + ' retry')
                 driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), options=chrome_options)
                 driver.get(link)
                 element = driver.find_element(By.XPATH,
@@ -134,8 +136,10 @@ def isFree(links, retries, max_page=1000):
                     if num_page == max_page:
                         break
                 else:
+                    log('failed')
                     if trials == retries:
                         print('not found', link)
+                        log('faild to retrieve the free course')
                         break
 
                     trials = trials + 1
