@@ -51,7 +51,7 @@ def scrape_yofree():
     return mylist
 
 
-def scrape_fc():
+def scrape_fc(max_page):
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64;\
             rv:50.0) Gecko/20100101 Firefox/50.0'}
 
@@ -67,7 +67,7 @@ def scrape_fc():
 
     h5s = soup.find_all('h5')
     mylist = []
-    for h5 in h5s:
+    for h5 in h5s[:max_page+10]:
         if h5.find('a') and h5.find('a')['href']:
             sec_page = get_soup(h5.find('a')['href'])
             btns = sec_page.find_all('button')
@@ -79,14 +79,8 @@ def scrape_fc():
     return(mylist)
 
 
-def isFree(links):
-    
-    # options = webdriver.ChromeOptions()
-    # options.add_experimental_option('excludeSwitches', ['enable-logging'])
-    # user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.54 Safari/537.36'
-    # options.add_argument('user-agent={0}'.format(user_agent))
-    # # options = Options()
-    # options.add_argument('--headless')
+def isFree(links, retries, max_page=1000):
+
     mylist = []
     chrome_options = webdriver.ChromeOptions()
     chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
@@ -94,11 +88,13 @@ def isFree(links):
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--no-sandbox")
     
+    if max_page == 1000:
+        max_page = len(links)
+    num_page = 0
     for link in links:
         name = link.split('/')[-2]
         log('verifying '+name+' in udemy')
         driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), options=chrome_options)
-        print(link)
         driver.get(link)
         element = driver.find_element(By.XPATH,
                                       '//*[@id="udemy"]/div[1]/div[2]/div/div/div[1]').text
@@ -113,8 +109,11 @@ def isFree(links):
             line = name + ',' +coupon +',' + url + ',' + expiration
             mylist.append(line)
             log('verified')
+            num_page = num_page + 1
+            if num_page == max_page:
+                break
         else:
-            while trials < 3:
+            while trials < retries+1:
                 driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), options=chrome_options)
                 driver.get(link)
                 element = driver.find_element(By.XPATH,
@@ -131,8 +130,11 @@ def isFree(links):
 
                     mylist.append(line)
                     log('verified')
+                    num_page = num_page + 1
+                    if num_page == max_page:
+                        break
                 else:
-                    if trials == 2:
+                    if trials == retries:
                         print('not found', link)
                         break
 

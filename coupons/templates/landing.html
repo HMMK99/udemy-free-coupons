@@ -97,10 +97,10 @@
           <option value="{{ website.id }}">{{ website.name }}</option>
           {% endfor %}
         </select></br></br>
-        <label for="mail"><strong>Period</strong></label>
-        <input type="text" placeholder="Enter Period" name="mail" required>
-        <label for="psw"><strong>Max Pages</strong></label>
-        <input type="password" placeholder="Enter Max Pages" name="psw" required>
+        <label for="mail"><strong>Max Pages</strong></label>
+        <input type="text" id="max_page" placeholder="Enter Max Pages" required>
+        <label for="psw"><strong>Retries</strong></label>
+        <input type="text" id="retries" placeholder="Enter Retries" required>
       </div>
       <button type="button" class="scrape"><strong>Search Now</strong></button>
       <div class="container" id="change" style="background-color: #eee; padding: 0; margin: 0; font-size: smaller;">
@@ -122,14 +122,19 @@
         $(document).on('click', '.scrape', function (f) {
             f.preventDefault();
             let current = $('#website_selected').val();
+            let max_page = $('#max_page').val();
+            let retries = $('#retries').val();
           $.ajax({
                   url: '{% url "coupons:scrape" 1 %}'.replace('1', current),
+                  type: 'POST',
                   data: {
+                      max_page: max_page,
+                      retries: retries,
                       csrfmiddlewaretoken: '{{ csrf_token }}',
                   },
 
                   success: function (json) {
-                      location.reload();
+                      /* location.reload(); */
                   },
                   error: function (xhr, errmsg, err) {
                   }
