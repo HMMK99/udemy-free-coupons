@@ -1,0 +1,1 @@
+web: gunicorn udemy_free_courses.wsgi 
